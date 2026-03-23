@@ -22,12 +22,19 @@ func main() {
 	cfg.AddDefaultHeader("X-Finnhub-Token", finnhubKey)
 	finhubbClient := finnhub.NewAPIClient(cfg).DefaultApi
 
-	quote, _, err := finhubbClient.Quote(context.Background()).Symbol("AAPL").Execute()
+	generalNews, _, err := finhubbClient.MarketNews(context.Background()).Category("general").Execute()
 	if err != nil {
-		log.Printf("error fetching quote %v", err)
+		log.Printf("Error Fetching MarketNews %v", err)
 	}
-	fmt.Printf(" Current: %+v\n", *quote.C)
-	fmt.Printf(" High: %+v\n", *quote.H)
-	fmt.Printf(" Low: %+v\n", *quote.L)
-	fmt.Printf(" Open: %+v\n", *quote.O)
+	for _, article := range generalNews {
+		fmt.Println(*article.Headline)
+		fmt.Println(*article.Summary)
+		fmt.Println(*article.Url)
+		if *article.Related != "" {
+			fmt.Println(*article.Related)
+		} else {
+			fmt.Println("No Related Companies")
+		}
+		fmt.Println("----------------------------------")
+	}
 }
